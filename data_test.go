@@ -2,16 +2,12 @@ package fsme
 
 import (
 	"testing"
+	"time"
 )
 
 const (
 	testCollectionName = "test"
 )
-
-type Person struct {
-	Name string
-	Age  int
-}
 
 func TestJobData(t *testing.T) {
 
@@ -24,7 +20,12 @@ func TestJobData(t *testing.T) {
 		t.Errorf("Error while configuring DB: %v", err)
 	}
 
-	data := &Person{Name: "John", Age: 40}
+	data := map[string]interface{}{
+		"Name":    "John",
+		"Age":     40,
+		"IsAdmin": false,
+		"When":    time.Now().UTC(),
+	}
 
 	obj := NewFSObject(data)
 
@@ -43,6 +44,11 @@ func TestJobData(t *testing.T) {
 	if obj.ID != obj2.ID {
 		t.Errorf("Got invalid data. Expected ID %s, Got ID: %s",
 			obj.ID, obj2.ID)
+	}
+
+	if obj.Data["Name"] != obj2.Data["Name"] {
+		t.Errorf("Got invalid data. Expected Name %s, Got: %s",
+			obj.Data["Name"], obj2.Data["Name"])
 	}
 
 	err = db.Delete(testCollectionName, obj.ID)
