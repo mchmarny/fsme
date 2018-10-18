@@ -58,6 +58,11 @@ func TestData(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error on delete: %v", err)
 	}
+
+	err = db.Close()
+	if err != nil {
+		t.Errorf("Error on close: %v", err)
+	}
 }
 
 func TestNulData(t *testing.T) {
@@ -79,6 +84,11 @@ func TestNulData(t *testing.T) {
 
 	if obj != nil {
 		t.Error("Got data for an invalid object")
+	}
+
+	err = db.Close()
+	if err != nil {
+		t.Errorf("Error on close: %v", err)
 	}
 
 }

@@ -22,6 +22,11 @@ func (d *DB) GetConfig() GCPConfig {
 	return d.config
 }
 
+// Close closes client connection
+func (d *DB) Close() error {
+	return d.client.Close()
+}
+
 // Save inserts or updates by ID
 func (d *DB) Save(collection string, obj *FSObject) error {
 
