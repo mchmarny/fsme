@@ -19,9 +19,6 @@ func TestJobData(t *testing.T) {
 		t.Errorf("Error while configuring DB: %v", err)
 	}
 
-	t.Logf("FsDB(projectID:%s region:%s)",
-		db.GetDBProjectID(), db.GetDBRegion())
-
 	data := struct {
 		Name string
 		Age  int

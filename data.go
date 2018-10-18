@@ -5,26 +5,21 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"time"
 
 	"cloud.google.com/go/firestore"
 )
 
 // DB represents simple FireStore helper
 type DB struct {
-	client    *firestore.Client
-	projectID string
-	region    string
-	ctx       context.Context
+	client *firestore.Client
+	config GCPConfig
+	ctx    context.Context
 }
 
-// GetDBProjectID returns the GCP Project ID with which this DB was configured
-func (d *DB) GetDBProjectID() string {
-	return d.projectID
-}
-
-// GetDBRegion returns the GCP region with which this DB was configured
-func (d *DB) GetDBRegion() string {
-	return d.region
+// GetConfig returns the GCP info with which this DB was configured
+func (d *DB) GetConfig() GCPConfig {
+	return d.config
 }
 
 // Save inserts or updates by ID
@@ -106,18 +101,25 @@ func NewDB(projectID, region string) (db *DB, err error) {
 		log.Printf("Region variable not set, using default: %s", region)
 	}
 
+	conf := GCPConfig{
+		ProjectID: projectID,
+		Region:    region,
+		SetOn:     time.Now().UTC(),
+	}
+
 	ctx := context.Background()
-	c, err := firestore.NewClient(ctx, projectID)
+	c, err := firestore.NewClient(ctx, conf.ProjectID)
 	if err != nil {
 		return nil, fmt.Errorf("Error while creating Firestore client: %v", err)
 	}
 
 	d := &DB{
-		ctx:       ctx,
-		projectID: projectID,
-		region:    region,
-		client:    c,
+		ctx:    ctx,
+		config: conf,
+		client: c,
 	}
+
+	log.Printf("DB configured %s", d.GetConfig())
 
 	return d, nil
 
