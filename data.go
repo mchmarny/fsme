@@ -90,15 +90,19 @@ func (d *DB) Delete(collection, id string) error {
 }
 
 // NewDB configures new DB instance
-func NewDB(projectID, region string) (db *DB, err error) {
+func NewDB(ctx context.Context, projectID, region string) (db *DB, err error) {
+
+	if ctx == nil {
+		return nil, errors.New("ctx required")
+	}
 
 	if projectID == "" {
-		return nil, errors.New("projectID variable required")
+		return nil, errors.New("projectID required")
 	}
 
 	if region == "" {
 		region = "us-central1"
-		log.Printf("Region variable not set, using default: %s", region)
+		log.Printf("Region not set, using default: %s", region)
 	}
 
 	conf := GCPConfig{
@@ -107,7 +111,6 @@ func NewDB(projectID, region string) (db *DB, err error) {
 		SetOn:     time.Now().UTC(),
 	}
 
-	ctx := context.Background()
 	c, err := firestore.NewClient(ctx, conf.ProjectID)
 	if err != nil {
 		return nil, fmt.Errorf("Error while creating Firestore client: %v", err)

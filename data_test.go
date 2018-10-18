@@ -1,21 +1,24 @@
 package fsme
 
 import (
+	"context"
 	"testing"
 	"time"
 )
 
 const (
 	testCollectionName = "test"
+	testProjectID      = "s9-demo"
+	testRegion         = ""
 )
 
-func TestJobData(t *testing.T) {
+func TestData(t *testing.T) {
 
 	if testing.Short() {
-		t.Skip("Skipping TestJobData")
+		t.Skip("Skipping TestData")
 	}
-
-	db, err := NewDB("s9-demo", "")
+	ctx := context.Background()
+	db, err := NewDB(ctx, testProjectID, testRegion)
 	if err != nil {
 		t.Errorf("Error while configuring DB: %v", err)
 	}
@@ -54,6 +57,28 @@ func TestJobData(t *testing.T) {
 	err = db.Delete(testCollectionName, obj.ID)
 	if err != nil {
 		t.Errorf("Error on delete: %v", err)
+	}
+}
+
+func TestNulData(t *testing.T) {
+
+	if testing.Short() {
+		t.Skip("Skipping TestNulData")
+	}
+	ctx := context.Background()
+	db, err := NewDB(ctx, testProjectID, testRegion)
+	if err != nil {
+		t.Errorf("Error while configuring DB: %v", err)
+	}
+
+	obj, err := db.Get(testCollectionName, "invalidObjectID")
+
+	if err == nil {
+		t.Error("Expected error")
+	}
+
+	if obj != nil {
+		t.Error("Got data for an invalid object")
 	}
 
 }
