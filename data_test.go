@@ -8,6 +8,11 @@ const (
 	testCollectionName = "test"
 )
 
+type Person struct {
+	Name string
+	Age  int
+}
+
 func TestJobData(t *testing.T) {
 
 	if testing.Short() {
@@ -19,10 +24,7 @@ func TestJobData(t *testing.T) {
 		t.Errorf("Error while configuring DB: %v", err)
 	}
 
-	data := struct {
-		Name string
-		Age  int
-	}{"John", 40}
+	data := &Person{Name: "John", Age: 40}
 
 	obj := NewFSObject(data)
 
