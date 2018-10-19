@@ -41,6 +41,25 @@ import "github.com/mchmarny/fsme"
 		log.Panicf("Error on get: %v", err)
 	}
 
+	// Get All
+	objCh := make(chan *FSObject)
+	go func() {
+		err = db.GetAll("users", objCh)
+		if err != nil {
+			log.Panicf("Error on get: %v", err)
+		}
+	}()
+
+	for {
+		select {
+		case outRecord := <-objC:
+			log.Printf("Record: %v", outRecord.ID)
+			return
+		default:
+			// nothing to do here
+		}
+	}
+
 	// Delete
 	err = db.Delete("users", obj2.ID)
 	if err != nil {
