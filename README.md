@@ -11,7 +11,7 @@ import "github.com/mchmarny/fsme"
 
 ## DB Instance
 
-> Define `FS_CLIENT_IDENTITY` environment variable to have the client use specific identity
+> Define `FS_CLIENT_IDENTITY` environment variable with a path to your GCP service account file to have the client use specific identity
 
 ```go
 
