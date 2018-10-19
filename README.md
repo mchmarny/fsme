@@ -8,15 +8,26 @@ Simple Firestore DB helper
 import "github.com/mchmarny/fsme"
 ```
 
-## Simple Save, Get, Delete
+
+## DB Instance
+
+> Define `FS_CLIENT_IDENTITY` environment variable to have the client use specific identity
 
 ```go
 
 	ctx := context.Background()
-	db, err := NewDB(ctx, PROJECT_ID, REGION)
+	db, err := fsme.NewDB(ctx, PROJECT_ID, REGION)
 	if err != nil {
 		log.Panicf("Error while configuring DB: %v", err)
 	}
+	defer db.Close()
+
+```
+
+
+## Simple Save, Get, Delete
+
+```go
 
     // Your data
 	myData := map[string]interface{}{
@@ -59,14 +70,7 @@ import "github.com/mchmarny/fsme"
 
 ```go
 
-	ctx := context.Background()
-	db, err := NewDB(ctx, PROJECT_ID, REGION)
-	if err != nil {
-		log.Panicf("Error while configuring DB: %v", err)
-	}
-	defer db.Close()
-
-	objCh := make(chan *FSObject)
+	objCh := make(chan *fsme.FSObject)
 	go func() {
 		err = db.GetAll("users", objCh)
 		if err != nil {
@@ -76,10 +80,11 @@ import "github.com/mchmarny/fsme"
 
 	for {
 		select {
-		case outRecord := <-objCh:
-			log.Printf("Record: %v", outRecord.ID)
+		case rec := <-objCh:
+			log.Printf("Record: %v", rec.ID)
 		default:
 			// nothing to do here
 		}
 	}
+
 ```
