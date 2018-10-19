@@ -41,25 +41,6 @@ import "github.com/mchmarny/fsme"
 		log.Panicf("Error on get: %v", err)
 	}
 
-	// Get All
-	objCh := make(chan *FSObject)
-	go func() {
-		err = db.GetAll("users", objCh)
-		if err != nil {
-			log.Panicf("Error on get: %v", err)
-		}
-	}()
-
-	for {
-		select {
-		case outRecord := <-objC:
-			log.Printf("Record: %v", outRecord.ID)
-			return
-		default:
-			// nothing to do here
-		}
-	}
-
 	// Delete
 	err = db.Delete("users", obj2.ID)
 	if err != nil {
@@ -70,5 +51,35 @@ import "github.com/mchmarny/fsme"
 	err = db.Close()
 	if err != nil {
 		log.Panicf("Error on close: %v", err)
+	}
+```
+
+## Get All
+
+
+```go
+
+	ctx := context.Background()
+	db, err := NewDB(ctx, PROJECT_ID, REGION)
+	if err != nil {
+		log.Panicf("Error while configuring DB: %v", err)
+	}
+	defer db.Close()
+
+	objCh := make(chan *FSObject)
+	go func() {
+		err = db.GetAll("users", objCh)
+		if err != nil {
+			log.Panicf("Error on get: %v", err)
+		}
+	}()
+
+	for {
+		select {
+		case outRecord := <-objCh:
+			log.Printf("Record: %v", outRecord.ID)
+		default:
+			// nothing to do here
+		}
 	}
 ```
