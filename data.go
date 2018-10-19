@@ -5,10 +5,12 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	"cloud.google.com/go/firestore"
 	"google.golang.org/api/iterator"
+	"google.golang.org/api/option"
 )
 
 // DB represents simple FireStore helper
@@ -115,7 +117,9 @@ func (d *DB) GetAll(collection string, ch chan<- *FSObject) error {
 			return e
 		}
 
-		ch <- c
+		if ch != nil {
+			ch <- c
+		}
 
 	}
 
@@ -145,7 +149,19 @@ func NewDB(ctx context.Context, projectID, region string) (db *DB, err error) {
 		SetOn:     time.Now().UTC(),
 	}
 
-	c, err := firestore.NewClient(ctx, conf.ProjectID)
+	// Connection options
+	var c *firestore.Client
+
+	clientIdentity := os.Getenv("FS_CLIENT_IDENTITY")
+	if clientIdentity != "" {
+		log.Printf("Using credentials file: %s", clientIdentity)
+		opt := option.WithCredentialsFile(clientIdentity)
+		c, err = firestore.NewClient(ctx, conf.ProjectID, opt)
+	} else {
+		log.Print("No credentials defined, using defaults")
+		c, err = firestore.NewClient(ctx, conf.ProjectID)
+	}
+
 	if err != nil {
 		return nil, fmt.Errorf("Error while creating Firestore client: %v", err)
 	}

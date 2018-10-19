@@ -11,7 +11,7 @@ const (
 	testCollectionName  = "test"
 	testProjectID       = "s9-demo"
 	testRegion          = ""
-	numberOfTestRecords = 3
+	numberOfTestRecords = 10
 )
 
 func TestData(t *testing.T) {
@@ -99,10 +99,10 @@ func TestGetAll(t *testing.T) {
 
 	}
 
-	objC := make(chan *FSObject)
-
+	objCh := make(chan *FSObject)
+	receivedCounter := 0
 	go func() {
-		err = db.GetAll(testCollectionName, objC)
+		err = db.GetAll(testCollectionName, objCh)
 		if err != nil {
 			t.Errorf("Error on get: %v", err)
 		}
@@ -110,10 +110,16 @@ func TestGetAll(t *testing.T) {
 
 	for {
 		select {
-		case objD := <-objC:
-			t.Logf("Record: %v", objD.Data["RecordIndex"])
-			// Only waiting for the 1st record
-			return
+		case objD := <-objCh:
+			receivedCounter++
+			t.Logf("Record: %d - %v", receivedCounter, objD.Data["RecordIndex"])
+			err = db.Delete(testCollectionName, objD.ID)
+			if err != nil {
+				t.Errorf("Error on delete: %v", err)
+			}
+			if receivedCounter == numberOfTestRecords {
+				return
+			}
 		default:
 			// nothing to do here
 		}
