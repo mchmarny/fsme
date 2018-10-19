@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"cloud.google.com/go/firestore"
+	"google.golang.org/api/iterator"
 )
 
 // DB represents simple FireStore helper
@@ -91,6 +92,34 @@ func (d *DB) Delete(collection, id string) error {
 
 	_, err := d.client.Collection(collection).Doc(id).Delete(d.ctx)
 	return err
+
+}
+
+// GetAll gets all records in a specified collection
+func (d *DB) GetAll(collection string, ch chan<- *FSObject) error {
+
+	i := d.client.Collection(collection).Documents(d.ctx)
+	defer i.Stop()
+
+	for {
+		d, e := i.Next()
+		if e == iterator.Done {
+			break
+		}
+		if e != nil {
+			return e
+		}
+
+		c := &FSObject{}
+		if e := d.DataTo(&c); e != nil {
+			return e
+		}
+
+		ch <- c
+
+	}
+
+	return nil
 
 }
 

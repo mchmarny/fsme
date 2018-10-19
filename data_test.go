@@ -2,14 +2,16 @@ package fsme
 
 import (
 	"context"
+	"fmt"
 	"testing"
 	"time"
 )
 
 const (
-	testCollectionName = "test"
-	testProjectID      = "s9-demo"
-	testRegion         = ""
+	testCollectionName  = "test"
+	testProjectID       = "s9-demo"
+	testRegion          = ""
+	numberOfTestRecords = 3
 )
 
 func TestData(t *testing.T) {
@@ -63,6 +65,60 @@ func TestData(t *testing.T) {
 	if err != nil {
 		t.Errorf("Error on close: %v", err)
 	}
+}
+
+func TestGetAll(t *testing.T) {
+
+	if testing.Short() {
+		t.Skip("Skipping TestData")
+	}
+	ctx := context.Background()
+	db, err := NewDB(ctx, testProjectID, testRegion)
+	if err != nil {
+		t.Errorf("Error while configuring DB: %v", err)
+	}
+	defer db.Close()
+
+	// load objects
+	list := []*FSObject{}
+	savedCounter := 0
+
+	for len(list) < numberOfTestRecords {
+
+		savedCounter++
+		obj := NewFSObject(map[string]interface{}{
+			"RecordIndex": fmt.Sprintf("John-%d", savedCounter),
+		})
+
+		err = db.Save(testCollectionName, obj)
+		if err != nil {
+			t.Errorf("Error on save: %v", err)
+		}
+
+		list = append(list, obj)
+
+	}
+
+	objC := make(chan *FSObject)
+
+	go func() {
+		err = db.GetAll(testCollectionName, objC)
+		if err != nil {
+			t.Errorf("Error on get: %v", err)
+		}
+	}()
+
+	for {
+		select {
+		case objD := <-objC:
+			t.Logf("Record: %v", objD.Data["RecordIndex"])
+			// Only waiting for the 1st record
+			return
+		default:
+			// nothing to do here
+		}
+	}
+
 }
 
 func TestNulData(t *testing.T) {
