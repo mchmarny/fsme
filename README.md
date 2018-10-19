@@ -28,7 +28,7 @@ import "github.com/mchmarny/fsme"
 
 ```go
 
-    // Your data
+	// Your data
 	myData := map[string]interface{}{
 		"Name":    "John",
 		"Age":     40,
@@ -36,7 +36,7 @@ import "github.com/mchmarny/fsme"
 		"When":    time.Now().UTC(),
 	}
 
-    // DB record
+	// DB record
 	dbObj := fsme.NewFSObject(myData)
 
 	// Save
@@ -62,6 +62,7 @@ import "github.com/mchmarny/fsme"
 	if err != nil {
 		log.Panicf("Error on close: %v", err)
 	}
+
 ```
 
 ### Get All
