@@ -1,17 +1,15 @@
 # fsme
 
-Simple Firestore DB helper
+The Firestore go client is already pretty easy to use but for simple use-cases it can be even easier. `fsme` helper streamlines these simple usage patterns into one small library.
 
-## Import
+### Import
 
 ```go
 import "github.com/mchmarny/fsme"
 ```
 
 
-## DB Instance
-
-> Define `FS_CLIENT_IDENTITY` environment variable with a path to your GCP service account file to have the client use specific identity
+### Helper Instance
 
 ```go
 
@@ -24,8 +22,9 @@ import "github.com/mchmarny/fsme"
 
 ```
 
+> Define `FS_CLIENT_IDENTITY` environment variable with a path to your GCP service account file to have the client use specific identity
 
-## Simple Save, Get, Delete
+### Simple Save, Get, Delete
 
 ```go
 
@@ -65,7 +64,7 @@ import "github.com/mchmarny/fsme"
 	}
 ```
 
-## Get All
+### Get All
 
 
 ```go
