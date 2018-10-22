@@ -105,7 +105,8 @@ import "github.com/mchmarny/fsme"
 	}
 
 	for i, u := range list {
-		log.Printf("User[%d] - %v", i, u)
+		log.Printf("User[%d] - %s", i, u["Name"])
 	}
+
 
 ```
