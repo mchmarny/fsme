@@ -12,6 +12,12 @@ type FSObject struct {
 	Data map[string]interface{} `json:"data" firestore:"data"`
 }
 
+// Update sets the data and updates the On timestamp while preserving ID
+func (o *FSObject) Update(data map[string]interface{}) {
+	o.Data = data
+	o.On = time.Now().UTC()
+}
+
 // GCPConfig represents GCP config
 type GCPConfig struct {
 	ProjectID string
@@ -31,4 +37,11 @@ func NewFSObject(data map[string]interface{}) *FSObject {
 		On:   time.Now().UTC(),
 		Data: data,
 	}
+}
+
+// FSCriterion defines the Firestore where criteria
+type FSCriterion struct {
+	Property string
+	Operator string
+	Value    interface{}
 }

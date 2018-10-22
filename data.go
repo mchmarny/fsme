@@ -127,6 +127,42 @@ func (d *DB) GetAll(collection string, ch chan<- *FSObject) error {
 
 }
 
+// GetWhere allows for filtered query using FSWhereCriterion object
+func (d *DB) GetWhere(collection string, c *FSCriterion) (list []*FSObject, err error) {
+
+	if c == nil {
+		return nil, fmt.Errorf("Criteria required")
+	}
+
+	result := make([]*FSObject, 0)
+	i := d.client.Collection(collection).
+		Where(c.Property, c.Operator, c.Value).
+		Documents(d.ctx)
+
+	defer i.Stop()
+
+	for {
+		d, e := i.Next()
+		if e == iterator.Done {
+			break
+		}
+		if e != nil {
+			return result, e
+		}
+
+		c := &FSObject{}
+		if e := d.DataTo(&c); e != nil {
+			return result, e
+		}
+
+		result = append(result, c)
+
+	}
+
+	return result, nil
+
+}
+
 // NewDB configures new DB instance
 func NewDB(ctx context.Context, projectID, region string) (db *DB, err error) {
 

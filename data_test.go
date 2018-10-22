@@ -127,6 +127,55 @@ func TestGetAll(t *testing.T) {
 
 }
 
+func TestGetWhere(t *testing.T) {
+
+	if testing.Short() {
+		t.Skip("Skipping TestData")
+	}
+	ctx := context.Background()
+	db, err := NewDB(ctx, testProjectID, testRegion)
+	if err != nil {
+		t.Errorf("Error while configuring DB: %v", err)
+	}
+	defer db.Close()
+
+	// load objects
+	list := []*FSObject{}
+
+	obj1 := NewFSObject(map[string]interface{}{"City": "Portland"})
+	db.Save(testCollectionName, obj1)
+	list = append(list, obj1)
+
+	obj2 := NewFSObject(map[string]interface{}{"City": "Seattle"})
+	db.Save(testCollectionName, obj2)
+	list = append(list, obj2)
+
+	obj3 := NewFSObject(map[string]interface{}{"City": "Portland"})
+	db.Save(testCollectionName, obj3)
+	list = append(list, obj3)
+
+	c := &FSCriterion{
+		Property: "data.City",
+		Operator: "==",
+		Value:    "Portland",
+	}
+
+	list, err = db.GetWhere(testCollectionName, c)
+	if err != nil {
+		t.Errorf("Error on GetWhere: %v", err)
+	}
+
+	if len(list) != 2 {
+		t.Errorf("Got invalid number of records. Expected 2, Got %d", len(list))
+	}
+
+	// Delete
+	db.Delete(testCollectionName, obj1.ID)
+	db.Delete(testCollectionName, obj2.ID)
+	db.Delete(testCollectionName, obj3.ID)
+
+}
+
 func TestNulData(t *testing.T) {
 
 	if testing.Short() {
