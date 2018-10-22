@@ -88,3 +88,24 @@ import "github.com/mchmarny/fsme"
 	}
 
 ```
+
+### Get All Where
+
+```go
+
+	c := &fsme.FSCriterion{
+		Property: "data.City",
+		Operator: "==",
+		Value:    "Portland",
+	}
+
+	list, err = db.GetWhere("users", c)
+	if err != nil {
+		log.Panicf("Error on get where: %v", err)
+	}
+
+	for i, u := range list {
+		log.Printf("User[%d] - %v", i, u)
+	}
+
+```
