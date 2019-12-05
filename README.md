@@ -1,11 +1,11 @@
-# fsme
+# Firestore Data Access Layer (firestoredal)
 
-The Firestore go client is already pretty easy to use but for simple use-cases it can be even easier. `fsme` helper streamlines these simple usage patterns into one small library.
+The Firestore go client is already pretty easy to use but for simple use-cases it can be even easier. `firestoredal` helper streamlines these simple usage patterns into one small library.
 
 ### Import
 
 ```go
-import "github.com/mchmarny/fsme"
+import "github.com/mchmarny/firestoredal"
 ```
 
 
