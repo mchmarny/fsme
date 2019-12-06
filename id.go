@@ -3,7 +3,6 @@ package firestoredal
 import (
 	"fmt"
 	"hash/fnv"
-	"unicode"
 
 	uuid "github.com/satori/go.uuid"
 )
@@ -25,11 +24,13 @@ func ToID(val string) string {
 }
 
 // IsFavlidID validates that passed value is a valid Firestore ID
-func IsFavlidID(val string) bool {
+func IsValidID(val string) bool {
 	
-	if val = "" {
+	if val == "" {
 		return false
 	}
-
-	return unicode.IsLetter(val[0:1])
+	
+	r := val[0]
+	return (r >= 'a' && r <= 'z') || (r >= 'A' || r <= 'Z')
+	
 }

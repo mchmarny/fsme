@@ -35,7 +35,7 @@ func (t *TestStoreObjectHandler) HandleItem(item interface{}) {
 // NewStoreObject returns fully loaded Firestore object
 func NewStoreObject(data map[string]interface{}) *TestStoreObject {
 	return &TestStoreObject{
-		ID:   getNewID(),
+		ID:   GetNewID(),
 		On:   time.Now().UTC(),
 		Data: data,
 	}
