@@ -15,8 +15,8 @@ func (d *Store) Save(ctx context.Context, collection string, id string, obj inte
 		return errors.New("object required")
 	}
 
-	if id == "" {
-		return errors.New("id required")
+	if !IsValidID(id) {
+		return fmt.Errorf("id must start with letter: '%s'", id)
 	}
 
 	if collection == "" {
@@ -32,8 +32,8 @@ func (d *Store) Save(ctx context.Context, collection string, id string, obj inte
 // GetByID returns stored object for given ID
 func (d *Store) GetByID(ctx context.Context, collection, id string, in interface{}) error {
 
-	if id == "" {
-		return errors.New("id required")
+	if !IsValidID(id) {
+		return fmt.Errorf("id must start with letter: '%s'", id)
 	}
 
 	if collection == "" {
@@ -60,8 +60,8 @@ func (d *Store) GetByID(ctx context.Context, collection, id string, in interface
 // DeleteByID deletes stored object for a given ID
 func (d *Store) DeleteByID(ctx context.Context, collection, id string) error {
 
-	if id == "" {
-		return errors.New("id required")
+	if !IsValidID(id) {
+		return fmt.Errorf("id must start with letter: '%s'", id)
 	}
 
 	if collection == "" {
@@ -75,9 +75,9 @@ func (d *Store) DeleteByID(ctx context.Context, collection, id string) error {
 
 // QueryHandler provides new instance of an item
 type QueryHandler interface {
-	MakeNewItem() interface{}
+	NewItem() interface{}
 	GetCriteria() []*StoreCriterion
-	AddItem(item interface{})
+	HandleItem(item interface{})
 }
 
 // GetByQuery allows for filtered query using QueryHandler
@@ -104,11 +104,11 @@ func (d *Store) GetByQuery(ctx context.Context, collection string, handler Query
 			return e
 		}
 
-		item := handler.MakeNewItem()
+		item := handler.NewItem()
 		if e := d.DataTo(&item); e != nil {
 			return e
 		}
-		handler.AddItem(item)
+		handler.HandleItem(item)
 	}
 
 	return nil

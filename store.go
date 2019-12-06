@@ -15,7 +15,7 @@ type Store struct {
 	client *firestore.Client
 }
 
-// NewStore configures new DB instance
+// NewStore configures new client instance
 func NewStore(ctx context.Context) (db *Store, err error) {
 
 	if ctx == nil {
@@ -38,7 +38,7 @@ func NewStore(ctx context.Context) (db *Store, err error) {
 
 }
 
-// NewStoreWithCredentialsFile configures new DB instance with credentials file
+// NewStoreWithCredentialsFile configures new client instance with credentials file
 func NewStoreWithCredentialsFile(ctx context.Context, path string) (db *Store, err error) {
 
 	if ctx == nil {

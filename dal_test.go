@@ -20,7 +20,7 @@ type TestStoreObjectHandler struct {
 	Criteria []*StoreCriterion
 }
 
-func (t *TestStoreObjectHandler) MakeNewItem() interface{} {
+func (t *TestStoreObjectHandler) NewItem() interface{} {
 	return &TestStoreObject{}
 }
 
@@ -28,7 +28,7 @@ func (t *TestStoreObjectHandler) GetCriteria() []*StoreCriterion {
 	return t.Criteria
 }
 
-func (t *TestStoreObjectHandler) AddItem(item interface{}) {
+func (t *TestStoreObjectHandler) HandleItem(item interface{}) {
 	t.Items = append(t.Items, item.(*TestStoreObject))
 }
 
