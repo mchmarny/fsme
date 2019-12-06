@@ -31,6 +31,6 @@ func IsValidID(val string) bool {
 	}
 	
 	r := val[0]
-	return (r >= 'a' && r <= 'z') || (r >= 'A' || r <= 'Z')
+	return (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z')
 	
 }

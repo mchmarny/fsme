@@ -110,9 +110,9 @@ func TestGetWhere(t *testing.T) {
 	assert.NotNil(t, h)
 	assert.Len(t, h.Items, 2)
 
-	for i, o := range h.Items {
-		t.Logf("obj[%d] = %v", i, o)
-	}
+// 	for i, o := range h.Items {
+// 		t.Logf("obj[%d] = %v", i, o)
+// 	}
 
 	// Delete
 	store.DeleteByID(ctx, colName, obj1.ID)

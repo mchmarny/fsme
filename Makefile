@@ -3,8 +3,8 @@ RELEASE_VERSION="0.2.1"
 all: test
 
 mod:
-	go mod download
 	go mod tidy
+	go mod vendor
 
 test:
 	go test ./... -v
