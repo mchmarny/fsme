@@ -1,14 +1,13 @@
+RELEASE_VERSION="0.2.1"
+
 all: test
 
+mod:
+	go mod download
+	go mod tidy
 
 test:
-	
-
-
-image:
-	gcloud builds submit \
-		--project=cloudylabs \
-		--tag "gcr.io/cloudylabs/maxprime:${RELEASE_VERSION}" .
+	go test ./... -v
 
 tag:
 	git tag "release-v${RELEASE_VERSION}"
