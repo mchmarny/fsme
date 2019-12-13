@@ -8,9 +8,8 @@ import (
 	m "cloud.google.com/go/compute/metadata"
 )
 
-
 var (
-	agentName   = "lighter"
+	agentName = "lighter"
 
 	projectKeys = []string{
 		"GCP_PROJECT",

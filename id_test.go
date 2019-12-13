@@ -22,7 +22,3 @@ func TestIsValidID(t *testing.T) {
 	assert.False(t, IsValidID("1234567"))
 	assert.True(t, IsValidID("a1234567"))
 }
-
-
-
-

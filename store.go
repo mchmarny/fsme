@@ -15,8 +15,8 @@ type Store struct {
 	client *firestore.Client
 }
 
-// NewStore configures new client instance
-func NewStore(ctx context.Context) (db *Store, err error) {
+// NewClient creates new Firestore client with derived project ID
+func NewClient(ctx context.Context) (client *firestore.Client, err error) {
 
 	if ctx == nil {
 		return nil, errors.New("ctx required")
@@ -27,7 +27,14 @@ func NewStore(ctx context.Context) (db *Store, err error) {
 		return nil, err
 	}
 
-	c, err := firestore.NewClient(ctx, projectID)
+	return firestore.NewClient(ctx, projectID)
+
+}
+
+// NewStore configures new client instance
+func NewStore(ctx context.Context) (db *Store, err error) {
+
+	c, err := NewClient(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("error creating client: %v", err)
 	}

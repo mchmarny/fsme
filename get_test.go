@@ -11,12 +11,9 @@ func TestGetByID(t *testing.T) {
 
 	colName := "test_get"
 	ctx := context.Background()
-	store, err := NewStore(ctx)
-	assert.Nil(t, err)
-	defer store.Close()
 
 	obj := NewTestObject("John", 40, 2.75)
-	err = store.Save(ctx, colName, obj.ID, obj)
+	err := store.Save(ctx, colName, obj.ID, obj)
 	assert.Nil(t, err)
 
 	obj2 := &MockedStoreObject{}
@@ -33,11 +30,8 @@ func TestQuerySort(t *testing.T) {
 
 	colName := "test_sortcol"
 	ctx := context.Background()
-	store, err := NewStore(ctx)
+	err := store.DeleteAll(ctx, colName, 1)
 	assert.Nil(t, err)
-	err = store.DeleteAll(ctx, colName, 1)
-	assert.Nil(t, err)
-	defer store.Close()
 
 	obj1 := NewTestObject("B", 1, 0.1)
 	store.Save(ctx, colName, obj1.ID, obj1)
@@ -80,11 +74,9 @@ func TestGetByQuery(t *testing.T) {
 
 	colName := "test_getcriterion"
 	ctx := context.Background()
-	store, err := NewStore(ctx)
+
+	err := store.DeleteAll(ctx, colName, 1)
 	assert.Nil(t, err)
-	err = store.DeleteAll(ctx, colName, 1)
-	assert.Nil(t, err)
-	defer store.Close()
 
 	obj1 := NewTestObject("Portland", 1, 0.1)
 	store.Save(ctx, colName, obj1.ID, obj1)
@@ -128,12 +120,9 @@ func TestNulData(t *testing.T) {
 
 	colName := "test_getnil"
 	ctx := context.Background()
-	store, err := NewStore(ctx)
-	assert.Nil(t, err)
-	defer store.Close()
 
 	obj := &MockedStoreObject{}
-	err = store.GetByID(ctx, colName, "invalidObjectID", obj)
+	err := store.GetByID(ctx, colName, "invalidObjectID", obj)
 	assert.NotNil(t, err)
 
 	err = store.Close()
