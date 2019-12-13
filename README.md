@@ -23,13 +23,18 @@ Assuming the following code is in your `main.go` file
 ```go
 package main
 
-import "github.com/mchmarny/lighter"
+import (
+	"context"
+	"time"
+
+	"github.com/mchmarny/lighter"
+)
 
 type Product struct {
-	ID    	string    `json:"id" firestore:"id"`
-	SoldOn  time.Time `json:"sold" firestore:"sold"`
-	Name    string    `json:"name" firestore:"name"`
-	Cost    float64    `json:"cost" firestore:"cost"`
+	ID     string    `json:"id" firestore:"id"`
+	SoldOn time.Time `json:"sold" firestore:"sold"`
+	Name   string    `json:"name" firestore:"name"`
+	Cost   float64   `json:"cost" firestore:"cost"`
 }
 
 func main() {
@@ -39,10 +44,10 @@ func main() {
 	defer store.Close()
 
 	p := &Product{
-		ID:    "id-1234",
-		SoldOn:    time.Now().UTC(),
-		Name:  "Demo Product",
-		Cost: 2.99,
+		ID:     "id-1234",
+		SoldOn: time.Now().UTC(),
+		Name:   "Demo Product",
+		Cost:   2.99,
 	}
 
 	err = store.Save(ctx, "product", p.ID, p)
@@ -52,7 +57,7 @@ func main() {
 	err = store.GetByID(ctx, "product", p.ID, p2)
 	handleError(err)
 
-	err = store.DeleteByID(ctx, colName, obj.ID)
+	err = store.DeleteByID(ctx, "product", p2.ID)
 	handleError(err)
 }
 
