@@ -1,6 +1,6 @@
 GO11MODULES=on
 APP?=lighter
-RELEASE="0.2.3"
+RELEASE="0.2.4"
 COMMIT=$(shell git rev-parse --short HEAD)
 
 all: test
