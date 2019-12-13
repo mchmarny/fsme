@@ -1,5 +1,5 @@
 GO11MODULES=on
-APP?=firestoredal
+APP?=lighter
 RELEASE="0.2.1"
 COMMIT=$(shell git rev-parse --short HEAD)
 

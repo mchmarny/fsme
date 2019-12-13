@@ -1,11 +1,11 @@
-# Firestore Data Access Layer (firestoredal)
+# Firestore Data Access Layer (lighter)
 
-The Firestore go client is already pretty easy to use but for simple use-cases it can be even easier. `firestoredal` helper streamlines these simple usage patterns into one small library.
+The Firestore go client is already pretty easy to use but for simple use-cases it can be even easier. `lighter` helper streamlines these simple usage patterns into one small library.
 
 ### Import
 
 ```go
-import "github.com/mchmarny/firestoredal"
+import "github.com/mchmarny/lighter"
 ```
 
 

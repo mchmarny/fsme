@@ -1,4 +1,4 @@
-package firestoredal
+package lighter
 
 import (
 	"net/http"
@@ -10,7 +10,7 @@ import (
 
 
 var (
-	agentName   = "firestoredal"
+	agentName   = "lighter"
 
 	projectKeys = []string{
 		"GCP_PROJECT",

@@ -1,4 +1,4 @@
-package firestoredal
+package lighter
 
 import (
 	"time"
