@@ -69,12 +69,8 @@ func NewStoreWithCredentialsFile(ctx context.Context, path string) (db *Store, e
 
 // Close closes client connection
 func (d *Store) Close() error {
-	return d.client.Close()
-}
-
-// StoreCriterion defines the Firestore where criteria
-type StoreCriterion struct {
-	Property string
-	Operator string
-	Value    interface{}
+	if d.client != nil {
+		return d.client.Close()
+	}
+	return nil
 }

@@ -23,14 +23,14 @@ func ToID(val string) string {
 	return fmt.Sprintf("%s%d", idPrefix, h.Sum32())
 }
 
-// IsFavlidID validates that passed value is a valid Firestore ID
+// IsValidID validates that passed value is a valid Firestore ID
 func IsValidID(val string) bool {
-	
+
 	if val == "" {
 		return false
 	}
-	
+
 	r := val[0]
 	return (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z')
-	
+
 }
