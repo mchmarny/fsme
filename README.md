@@ -53,24 +53,29 @@ type Product struct {
 
 func main() {
 	ctx := context.Background()
+
+	// create lighter client
 	store, err := lighter.NewStore(ctx)
 	handleError(err)
 	defer store.Close()
 
-	p := &Product{
+	p1 := &Product{
 		ID:     "id-1234", // Firestore IDs must start with a letter, see IDs section below
 		SoldOn: time.Now().UTC(),
 		Name:   "Demo Product",
 		Cost:   2.99,
 	}
 
-	err = store.Save(ctx, "product", p.ID, p)
+	// save above defined product  to the product collection in Firestore
+	err = store.Save(ctx, "product", p1.ID, p1)
 	handleError(err)
 
 	p2 := &Product{}
-	err = store.GetByID(ctx, "product", p.ID, p2)
+	// get a new instance (p2) of the above saved product (p1)
+	err = store.GetByID(ctx, "product", p1.ID, p2)
 	handleError(err)
 
+	// delete the saved product
 	err = store.DeleteByID(ctx, "product", p2.ID)
 	handleError(err)
 }
