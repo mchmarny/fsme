@@ -1,6 +1,6 @@
 GO11MODULES=on
 APP?=lighter
-RELEASE="0.2.1"
+RELEASE="0.2.3"
 COMMIT=$(shell git rev-parse --short HEAD)
 
 all: test
@@ -16,6 +16,6 @@ test:
 
 .PHONY: tag
 tag:
-	git tag "release-v${RELEASE}-${COMMIT}"
-	git push origin "release-v${RELEASE}-${COMMIT}"
+	git tag "v${RELEASE}"
+	git push origin "v${RELEASE}"
 	git log --oneline

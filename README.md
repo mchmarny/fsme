@@ -1,25 +1,66 @@
-# Firestore Data Access Layer (lighter)
+# lighter
 
-The Firestore go client is already pretty easy to use but for simple use-cases it can be even easier. `lighter` helper streamlines these simple usage patterns into one small library.
+`lighter` is the small [Cloud Firestore](https://cloud.google.com/firestore/) client wrapper to simplify many of the common (and sometimes verbose) tasks when using Firestore in your go application. `lighter` can also be used with the official go client library to provide simpler `Query` definition or `ResultHandler` to help you extract Firestore documents to go structures.
 
-### Import
+## Installation
+
+To install `lighter` you will need Go version 1.11+ installed
+
+```shell
+go get -u github.com/mchmarny/lighter
+```
+
+Then in your code you can import `lighter` like this
 
 ```go
 import "github.com/mchmarny/lighter"
 ```
 
+## Quick Start
 
-### Helper Instance
+Assuming the following code is in your `main.go` file
 
 ```go
+package main
 
+import "github.com/mchmarny/lighter"
+
+type Product struct {
+	ID    	string    `json:"id" firestore:"id"`
+	SoldOn  time.Time `json:"sold" firestore:"sold"`
+	Name    string    `json:"name" firestore:"name"`
+	Cost    float64    `json:"cost" firestore:"cost"`
+}
+
+func main() {
 	ctx := context.Background()
-	db, err := fsme.NewDB(ctx, PROJECT_ID, REGION)
-	if err != nil {
-		log.Panicf("Error while configuring DB: %v", err)
-	}
-	defer db.Close()
+	store, err := lighter.NewStore(ctx)
+	handleError(err)
+	defer store.Close()
 
+	p := &Product{
+		ID:    "id-1234",
+		SoldOn:    time.Now().UTC(),
+		Name:  "Demo Product",
+		Cost: 2.99,
+	}
+
+	err = store.Save(ctx, "product", p.ID, p)
+	handleError(err)
+
+	p2 := &Product{}
+	err = store.GetByID(ctx, "product", p.ID, p2)
+	handleError(err)
+
+	err = store.DeleteByID(ctx, colName, obj.ID)
+	handleError(err)
+}
+
+func handleError(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
 ```
 
 > Define `FS_CLIENT_IDENTITY` environment variable with a path to your GCP service account file to have the client use specific identity
