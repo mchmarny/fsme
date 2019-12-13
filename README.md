@@ -63,91 +63,96 @@ func handleError(err error) {
 }
 ```
 
-> Define `FS_CLIENT_IDENTITY` environment variable with a path to your GCP service account file to have the client use specific identity
+## Get sorted by struct property
 
-### Simple Save, Get, Delete
+> Use the name and case of the property defined in the struct `firestore` attribute
 
-```go
-
-	// Your data
-	myData := map[string]interface{}{
-		"Name":    "John",
-		"Age":     40,
-		"IsAdmin": false,
-		"When":    time.Now().UTC(),
-	}
-
-	// DB record
-	dbObj := fsme.NewFSObject(myData)
-
-	// Save
-	err = db.Save("users", dbObj)
-	if err != nil {
-		log.Panicf("Error on save: %v", err)
-	}
-
-	// Get
-	obj2, err := db.Get("users", dbObj.ID)
-	if err != nil {
-		log.Panicf("Error on get: %v", err)
-	}
-
-	// Delete
-	err = db.Delete("users", obj2.ID)
-	if err != nil {
-		log.Panicf("Error on delete: %v", err)
-	}
-
-	// Finish
-	err = db.Close()
-	if err != nil {
-		log.Panicf("Error on close: %v", err)
-	}
-
-```
-
-### Get All
-
+To get all products sorted by descending cost
 
 ```go
+q := &lighter.QueryCriteria{
+	Collection: "product",
+	OrderBy: &lighter.Order{
+		Property:   "cost",
+		Descending: true,
+	},
+}
 
-	objCh := make(chan *fsme.FSObject)
-	go func() {
-		err = db.GetAll("users", objCh)
-		if err != nil {
-			log.Panicf("Error on get: %v", err)
-		}
-	}()
-
-	for {
-		select {
-		case rec := <-objCh:
-			log.Printf("Record: %v", rec.ID)
-		default:
-			// nothing to do here
-		}
-	}
-
+h := &ProductResultHandler{}
+err = store.GetByQuery(ctx, q, h)
 ```
 
-### Get All Where
+## Get filtered by struct property
+
+> Use the name and case of the property defined in the struct `firestore` attribute
+
+To get all products where the cost is less than 10.0
 
 ```go
+q := &lighter.QueryCriteria{
+	Collection: "product",
+	Criteria: []*lighter.Criterion{
+		&lighter.Criterion{
+			Property: "cost",
+			Operator: ">=",
+			Value:    10.0,
+		},
+	},
+}
 
-	c := &fsme.FSCriterion{
-		Property: "data.City",
-		Operator: "==",
-		Value:    "Portland",
-	}
-
-	list, err = db.GetWhere("users", c)
-	if err != nil {
-		log.Panicf("Error on get where: %v", err)
-	}
-
-	for i, u := range list {
-		log.Printf("User[%d] - %v", i, u)
-	}
-
-
+h := &ProductResultHandler{}
+err = store.GetByQuery(ctx, q, h)
 ```
+
+## Process results using custom handler
+
+`lighter` defines `ResultHandler` interface to process Firestore results
+
+```go
+// ResultHandler defines methods required to handle result items
+type ResultHandler interface {
+	// MakeNew makes new item instance for loading from result iterator
+	MakeNew() interface{}
+	// Append adds newly loaded item to results
+	Append(item interface{})
+}
+```
+
+In your code you need to define an implementation of that interface (e.g. the `ProductResultHandler`)
+
+```go
+type ProductResultHandler struct {
+	Products []*Product
+}
+
+func (t *ProductResultHandler) MakeNew() interface{} {
+	return &Product{}
+}
+
+func (t *ProductResultHandler) Append(item interface{}) {
+	t.Products = append(t.Products, item.(*Product))
+}
+```
+
+Once you have the struct that implements `ResultHandler` you can use it either in `GetByQuery`
+
+```go
+h := &ProductResultHandler{Product: make([]*Product, 0)}
+err := store.GetByQuery(ctx, q, h)
+```
+
+Or by creating your Firestore documents query and passing the resulting `firestore.DocumentIterator` along with your handler
+
+```go
+docs, err := client.Collection("products").Where("cost", ">-", 10.0)
+handleError(err)
+
+h := &ProductResultHandler{Product: make([]*Product, 0)}
+err := store.HandleResults(ctx, docs, h)
+```
+
+## Disclaimer
+
+This is my personal project and it does not represent my employer. I take no responsibility for issues caused by this code. I do my best to ensure that everything works, but if something goes wrong, my apologies is all you will get.
+
+
